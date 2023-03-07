@@ -7,7 +7,7 @@
   
   tasks:
   - name: Install Windows DNS Feature
-    ansible.windows.win_feature:
+    win_feature:
       name: DNS
       state: present
       include_management_tools: yes
@@ -39,7 +39,7 @@
       adapter_names: "*"
       ipv4_addresses: "127.0.0.1"
 
-  - name: reboot | Rebooting Server
+  - name: Rebooting Server
     win_reboot:
       reboot_timeout_sec: 300
       shutdown_timeout: 300
