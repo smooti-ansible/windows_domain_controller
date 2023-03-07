@@ -9,7 +9,7 @@
   - name: Set Administrator Password for Domain Controller
     win_user:
       name: Administrator
-      password: "{{ windows_domain_controller_info[domain_admin_password] }}"
+      password: "{{ windows_domain_controller_info['domain_admin_password'] }}"
       update_pasword: always
       state: present
 
