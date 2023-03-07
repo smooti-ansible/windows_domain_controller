@@ -1,0 +1,76 @@
+---
+- name: Windows Domain Controller
+  hosts: windows
+  gather_facts: false
+  vars_files:
+  - ../vars/vars.yaml
+  
+  tasks:
+  - name: Install Windows DNS Feature
+    ansible.windows.win_feature:
+      name: DNS
+      state: present
+      include_management_tools: yes
+      include_sub_features: yes
+    register: dns_output
+
+  - name: Install RSAT AD Admin Center
+    win_feature:
+      name: RSAT-AD-AdminCenter
+      state: present
+    register: rsat_output
+
+  - name: Install AD Domain Services
+    win_feature: 
+      name: AD-Domain-Services
+      include_management_tools: yes
+      include_sub_features: yes
+      state: present
+    register: ad_output
+
+  - name: Creating a windows domain
+    win_domain:
+      dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
+      safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
+    register: win_domain_output
+
+  - name: Setting DNS Servers
+    win_dns_client:
+      adapter_names: "*"
+      ipv4_addresses: "127.0.0.1"
+
+  - name: reboot | Rebooting Server
+    win_reboot:
+      reboot_timeout_sec: 300
+      shutdown_timeout: 300
+
+  - name: Validate Domain Controller
+    win_domain_controller:
+      dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
+      domain_admin_user: "{{ windows_domain_controller_info['domain_admin_user'] }}"
+      domain_admin_password: "{{ windows_domain_controller_info['domain_admin_password'] }}"
+      safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
+      state: "{{ windows_domain_controller_info['state'] }}"
+    register: domain_controller_output
+
+
+# # DEBUG
+#   - name: DNS Output
+#     ansible.builtin.debug:
+#       var: dns_output
+
+#   - name: RSAT Output
+#     ansible.builtin.debug:
+#       var: rsat_output
+
+#   - name: AD Output
+#     ansible.builtin.debug:
+#       var: ad_output
+
+#   - name: Win Domain Output
+#     ansible.builtin.debug:
+#       var: win_domain_output
+
+  # - name: DC Output
+  #   ansible.builtin.debug:
+  #     var: domain_controller_output

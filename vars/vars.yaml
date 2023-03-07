@@ -1,0 +1,7 @@
+# Domain Controller
+windows_domain_controller_info:
+  dns_domain_name: blah.local
+  domain_admin_password: 1qaz2wsx!QAZ@WSX
+  domain_admin_user: Administrator@blah.local
+  safe_mode_password: 1qaz2wsx!QAZ@WSX
+  state: domain_controller
