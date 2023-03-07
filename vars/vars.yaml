@@ -5,3 +5,9 @@ windows_domain_controller_info:
   domain_admin_user: Administrator@blah.local
   safe_mode_password: 1qaz2wsx!QAZ@WSX
   state: domain_controller
+
+ansible_user: solaire
+ansible_password: 1qaz2wsx!QAZ@WSX
+ansible_connection: winrm
+ansible_port: 5985
+ansible_winrm_transport: basic
