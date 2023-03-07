@@ -6,13 +6,6 @@
   - ../vars/vars.yaml
   
   tasks:
-  - name: Set Administrator Password for Domain Controller
-    win_user:
-      name: Administrator
-      password: "{{ windows_domain_controller_info['domain_admin_password'] }}"
-      update_pasword: always
-      state: present
-
   - name: Install Windows DNS Feature
     win_feature:
       name: DNS
