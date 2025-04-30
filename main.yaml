@@ -1,5 +1,5 @@
 ---
-- name: Windows Domain Controller
+- name: Configure a Windows Domain Controller
   hosts: all
   gather_facts: false
   vars_files:
@@ -7,51 +7,51 @@
   
   tasks:
   - name: Install Windows DNS Feature
-    win_feature:
+    register: dns_output
+    ansible.windows.win_feature:
       name: DNS
       state: present
-      include_management_tools: yes
-      include_sub_features: yes
-    register: dns_output
+      include_management_tools: true
+      include_sub_features: true
 
   - name: Install RSAT AD Admin Center
-    win_feature:
+    register: rsat_output
+    ansible.windows.win_feature:
       name: RSAT-AD-AdminCenter
       state: present
-    register: rsat_output
 
   - name: Install AD Domain Services
-    win_feature: 
-      name: AD-Domain-Services
-      include_management_tools: yes
-      include_sub_features: yes
-      state: present
     register: ad_output
+    ansible.windows.win_feature: 
+      name: AD-Domain-Services
+      include_management_tools: true
+      include_sub_features: true
+      state: present
 
   - name: Creating a windows domain
-    win_domain:
+    register: win_domain_output
+    ansible.windows.win_domain:
       dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
       safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
-    register: win_domain_output
 
   - name: Setting DNS Servers
-    win_dns_client:
+    ansible.windows.win_dns_client:
       adapter_names: "*"
       ipv4_addresses: "127.0.0.1"
 
   - name: Rebooting Server
-    win_reboot:
+    ansible.windows.win_reboot:
       reboot_timeout_sec: 300
       shutdown_timeout: 300
 
   - name: Validate Domain Controller
-    win_domain_controller:
+    register: domain_controller_output
+    ansible.windows.win_domain_controller:
       dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
       domain_admin_user: "{{ windows_domain_controller_info['domain_admin_user'] }}"
       domain_admin_password: "{{ windows_domain_controller_info['domain_admin_password'] }}"
       safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
       state: "{{ windows_domain_controller_info['state'] }}"
-    register: domain_controller_output
 
 
 # # DEBUG
