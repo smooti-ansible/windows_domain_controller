@@ -1,0 +1,9 @@
+---
+name: Ansible linting
+run-name: ${{ github.actor }} is linting Ansible 🚀
+on: [push]
+jobs:
+  Linting:
+    uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
+    with:
+      args: '-p playbooks'
