@@ -3,55 +3,55 @@
   hosts: all
   gather_facts: false
   vars_files:
-  - ../vars/vars.yaml
-  
+    - ../vars/vars.yaml
+
   tasks:
-  - name: Install Windows DNS Feature
-    register: dns_output
-    ansible.windows.win_feature:
-      name: DNS
-      state: present
-      include_management_tools: true
-      include_sub_features: true
+    - name: Ensure Windows DNS Feature is present
+      register: dns_output
+      ansible.windows.win_feature:
+        name: DNS
+        state: present
+        include_management_tools: true
+        include_sub_features: true
 
-  - name: Install RSAT AD Admin Center
-    register: rsat_output
-    ansible.windows.win_feature:
-      name: RSAT-AD-AdminCenter
-      state: present
+    - name: Ensure RSAT AD Admin Center is present
+      register: rsat_output
+      ansible.windows.win_feature:
+        name: RSAT-AD-AdminCenter
+        state: present
 
-  - name: Install AD Domain Services
-    register: ad_output
-    ansible.windows.win_feature: 
-      name: AD-Domain-Services
-      include_management_tools: true
-      include_sub_features: true
-      state: present
+    - name: Ensure AD Domain Services is installed
+      register: ad_output
+      ansible.windows.win_feature:
+        name: AD-Domain-Services
+        include_management_tools: true
+        include_sub_features: true
+        state: present
 
-  - name: Creating a windows domain
-    register: win_domain_output
-    ansible.windows.win_domain:
-      dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
-      safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
+    - name: Creating a windows domain
+      register: win_domain_output
+      microsoft.ad.domain:
+        dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
+        safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
 
-  - name: Setting DNS Servers
-    ansible.windows.win_dns_client:
-      adapter_names: "*"
-      ipv4_addresses: "127.0.0.1"
+    - name: Setting DNS Servers
+      ansible.windows.win_dns_client:
+        adapter_names: "*"
+        ipv4_addresses: "127.0.0.1"
 
-  - name: Rebooting Server
-    ansible.windows.win_reboot:
-      reboot_timeout_sec: 300
-      shutdown_timeout: 300
+    - name: Rebooting Server
+      ansible.windows.win_reboot:
+        reboot_timeout_sec: 300
+        shutdown_timeout: 300
 
-  - name: Validate Domain Controller
-    register: domain_controller_output
-    ansible.windows.win_domain_controller:
-      dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
-      domain_admin_user: "{{ windows_domain_controller_info['domain_admin_user'] }}"
-      domain_admin_password: "{{ windows_domain_controller_info['domain_admin_password'] }}"
-      safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
-      state: "{{ windows_domain_controller_info['state'] }}"
+    - name: Validate Domain Controller
+      register: domain_controller_output
+      microsoft.ad.domain_controller:
+        dns_domain_name: "{{ windows_domain_controller_info['dns_domain_name'] }}"
+        domain_admin_user: "{{ windows_domain_controller_info['domain_admin_user'] }}"
+        domain_admin_password: "{{ windows_domain_controller_info['domain_admin_password'] }}"
+        safe_mode_password: "{{ windows_domain_controller_info['safe_mode_password'] }}"
+        state: "{{ windows_domain_controller_info['state'] }}"
 
 
 # # DEBUG
