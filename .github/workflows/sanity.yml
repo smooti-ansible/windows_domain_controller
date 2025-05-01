@@ -1,12 +1,12 @@
 ---
-name: Ansible linting
+name: Sanity check
 run-name: ${{ github.actor }} is linting Ansible 🚀
 on: push
 jobs:
   Linting:
     # Use ansible-lint workflow by Ansible to perform linting
     # Runs ansible-lint against all 'yml' and "yaml" files
-    name: Lint ansible files
+    name: Lint
     uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
     with:
       args: '-p .'
